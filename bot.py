@@ -1,20 +1,26 @@
+import discord
+from discord.ext import commands
 import os
-from telegram import Update
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("اهلا بيك! البوت شغال ✅ ابعت اي رسالة وهرد عليك.")
+intents = discord.Intents.default()
+intents.message_content = True
 
-async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(f"وصلتني رسالتك: {update.message.text}")
+bot = commands.Bot(command_prefix="!", intents=intents)
 
-def main():
-    token = os.environ.get("BOT_TOKEN")
-    app = Application.builder().token(token).build()
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
-    print("Bot is running...")
-    app.run_polling()
+@bot.event
+async def on_ready():
+    print(f"Logged in as {bot.user} - البوت شغال ✅")
 
-if __name__ == "__main__":
-    main()
+@bot.command()
+async def hello(ctx):
+    await ctx.send(f"اهلا بيك يا {ctx.author.mention} ! البوت شغال 🔥")
+
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return
+    if message.content.lower() == "hi":
+        await message.channel.send("Hi bro 👋")
+    await bot.process_commands(message)
+
+bot.run(os.environ.get("MTU3NDI3MjA0NDg2NTE2NzUwMA.GLsxl9.yuRFTXPy3v5yyIf73IX8weYEliFwM8W6m_m-Xs"))
